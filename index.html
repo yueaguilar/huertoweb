@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Huerto Inteligente</title>
+
+    <link rel="stylesheet" href="styles.css">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <!-- Fondo -->
+    <div class="background"></div>
+
+    <!-- LOGIN -->
+    <section class="login-section" id="loginSection">
+
+        <div class="glass-card">
+
+            <div class="logo-area">
+                <h1>🌱 Huerto Inteligente</h1>
+                <p>Bitácora digital para el cuidado de tus plantas</p>
+            </div>
+
+            <div class="form-container">
+
+                <h2>Iniciar Sesión</h2>
+
+                <input type="email" id="email" placeholder="Correo electrónico">
+                <input type="password" id="password" placeholder="Contraseña">
+
+                <button id="loginBtn">Entrar</button>
+
+                <div class="divider">
+                    <span>o</span>
+                </div>
+
+                <button class="register-btn" id="registerBtn">
+                    Crear Cuenta
+                </button>
+
+            </div>
+
+        </div>
+
+    </section>
+
+    <!-- BITACORA -->
+    <section class="dashboard hidden" id="dashboard">
+
+        <header class="topbar">
+
+            <div>
+                <h2>🌿 Bitácora de Plantas</h2>
+                <p>Registra el crecimiento y cuidado de tus plantas</p>
+            </div>
+
+            <button class="logout-btn" id="logoutBtn">
+                Cerrar Sesión
+            </button>
+
+        </header>
+
+        <div class="dashboard-grid">
+
+            <!-- FORMULARIO -->
+            <div class="card form-card">
+
+                <h3>Nuevo Registro</h3>
+
+                <form id="plantForm">
+
+                    <input type="text" id="plantName" placeholder="Nombre de la planta" required>
+
+                    <input type="number" id="height" placeholder="Altura en cm" required>
+
+                    <select id="fertilizer" required>
+                        <option value="">Selecciona un abono</option>
+                        <option value="Orgánico">Orgánico</option>
+                        <option value="Composta">Composta</option>
+                        <option value="Nitrógeno">Nitrógeno</option>
+                        <option value="Fósforo">Fósforo</option>
+                        <option value="Potasio">Potasio</option>
+                        <option value="Humus">Humus</option>
+                    </select>
+
+                    <textarea
+                        id="notes"
+                        placeholder="Escribe observaciones o notas..."
+                    ></textarea>
+
+                    <label class="upload-area">
+
+                        <input type="file" id="imageInput" accept="image/*">
+
+                        <span>📸 Subir Imagen</span>
+
+                    </label>
+
+                    <button type="submit" class="save-btn">
+                        Guardar Registro
+                    </button>
+
+                </form>
+
+            </div>
+
+            <!-- HISTORIAL -->
+            <div class="card history-card">
+
+                <div class="history-top">
+
+                    <h3>Historial de Cuidados</h3>
+
+                    <input
+                        type="text"
+                        id="searchPlant"
+                        placeholder="Buscar planta..."
+                    >
+
+                </div>
+
+                <div id="historyContainer" class="history-container">
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+    <!-- Firebase -->
+    <script type="module" src="app.js"></script>
+
+</body>
+</html>
