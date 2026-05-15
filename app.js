@@ -1,92 +1,179 @@
-// Firebase SDK
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+// FIREBASE
+
+import { initializeApp }
+from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 
 import {
+
     getAuth,
     createUserWithEmailAndPassword,
     signInWithEmailAndPassword,
     signOut,
     onAuthStateChanged
+
 }
 from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
 import {
+
     getFirestore,
     collection,
     addDoc,
     query,
     where,
     getDocs
+
 }
 from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 import {
+
     getStorage,
     ref,
     uploadBytes,
     getDownloadURL
+
 }
 from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
 
 
-// CONFIG FIREBASE
+// CONFIG
 
 const firebaseConfig = {
+
     apiKey: "AIzaSyCRIBV5bPUN3cpyHd4oINpHeVxbloEgcZc",
+
     authDomain: "huerto-4a8f8.firebaseapp.com",
+
     projectId: "huerto-4a8f8",
+
     storageBucket: "huerto-4a8f8.firebasestorage.app",
+
     messagingSenderId: "982721744496",
+
     appId: "1:982721744496:web:d3d670ed580da7ec212eb5",
+
     measurementId: "G-HP5Q66K138"
+
 };
 
 
-// INICIALIZAR FIREBASE
+// INICIALIZAR
 
 const app = initializeApp(firebaseConfig);
 
 const auth = getAuth(app);
+
 const db = getFirestore(app);
+
 const storage = getStorage(app);
 
 
 // ELEMENTOS
 
-const loginSection = document.getElementById("loginSection");
-const dashboard = document.getElementById("dashboard");
+const loginSection =
+document.getElementById("loginSection");
 
-const email = document.getElementById("email");
-const password = document.getElementById("password");
+const dashboard =
+document.getElementById("dashboard");
 
-const loginBtn = document.getElementById("loginBtn");
-const registerBtn = document.getElementById("registerBtn");
-const logoutBtn = document.getElementById("logoutBtn");
+const email =
+document.getElementById("email");
 
-const plantForm = document.getElementById("plantForm");
+const password =
+document.getElementById("password");
 
-const historyContainer = document.getElementById("historyContainer");
+const loginBtn =
+document.getElementById("loginBtn");
 
-const searchPlant = document.getElementById("searchPlant");
+const registerBtn =
+document.getElementById("registerBtn");
+
+const logoutBtn =
+document.getElementById("logoutBtn");
+
+const plantForm =
+document.getElementById("plantForm");
+
+const historyContainer =
+document.getElementById("historyContainer");
+
+const searchPlant =
+document.getElementById("searchPlant");
+
+const imageInput =
+document.getElementById("imageInput");
+
+const previewImage =
+document.getElementById("previewImage");
+
+
+// VISTA PREVIA IMAGEN
+
+imageInput.addEventListener("change", () => {
+
+    const file = imageInput.files[0];
+
+    if(file){
+
+        previewImage.src =
+        URL.createObjectURL(file);
+
+        previewImage.style.display =
+        "block";
+
+    }
+
+});
 
 
 // REGISTRO
 
-registerBtn.addEventListener("click", async () => {
+registerBtn.addEventListener(
+"click",
+async () => {
 
-    try {
+    if(
+        email.value === "" ||
+        password.value === ""
+    ){
+
+        alert("Completa todos los campos");
+
+        return;
+
+    }
+
+    try{
 
         await createUserWithEmailAndPassword(
+
             auth,
             email.value,
             password.value
+
         );
 
         alert("Cuenta creada correctamente");
 
-    } catch (error) {
+    }
+    catch(error){
 
-        alert(error.message);
+        if(
+            error.code ===
+            "auth/email-already-in-use"
+        ){
+
+            alert(
+                "Ese correo ya tiene una cuenta creada"
+            );
+
+        }
+        else{
+
+            alert(error.message);
+
+        }
 
     }
 
@@ -95,19 +182,65 @@ registerBtn.addEventListener("click", async () => {
 
 // LOGIN
 
-loginBtn.addEventListener("click", async () => {
+loginBtn.addEventListener(
+"click",
+async () => {
 
-    try {
+    if(
+        email.value === "" ||
+        password.value === ""
+    ){
+
+        alert(
+            "Ingresa correo y contraseña"
+        );
+
+        return;
+
+    }
+
+    try{
 
         await signInWithEmailAndPassword(
+
             auth,
             email.value,
             password.value
+
         );
 
-    } catch (error) {
+        alert("Bienvenido");
 
-        alert(error.message);
+    }
+    catch(error){
+
+        if(
+            error.code ===
+            "auth/user-not-found"
+        ){
+
+            alert(
+                "Necesitas crear una cuenta primero"
+            );
+
+        }
+        else if(
+            error.code ===
+            "auth/wrong-password"
+        ){
+
+            alert(
+                "Contraseña incorrecta"
+            );
+
+        }
+        else{
+
+            alert(
+                "Correo o contraseña inválidos"
+            );
+
+        }
 
     }
 
@@ -116,7 +249,9 @@ loginBtn.addEventListener("click", async () => {
 
 // LOGOUT
 
-logoutBtn.addEventListener("click", async () => {
+logoutBtn.addEventListener(
+"click",
+async () => {
 
     await signOut(auth);
 
@@ -127,17 +262,28 @@ logoutBtn.addEventListener("click", async () => {
 
 onAuthStateChanged(auth, (user) => {
 
-    if (user) {
+    if(user){
 
-        loginSection.classList.add("hidden");
-        dashboard.classList.remove("hidden");
+        loginSection.classList.add(
+            "hidden"
+        );
+
+        dashboard.classList.remove(
+            "hidden"
+        );
 
         loadHistory();
 
-    } else {
+    }
+    else{
 
-        loginSection.classList.remove("hidden");
-        dashboard.classList.add("hidden");
+        loginSection.classList.remove(
+            "hidden"
+        );
+
+        dashboard.classList.add(
+            "hidden"
+        );
 
     }
 
@@ -146,111 +292,196 @@ onAuthStateChanged(auth, (user) => {
 
 // GUARDAR REGISTRO
 
-plantForm.addEventListener("submit", async (e) => {
+plantForm.addEventListener(
+"submit",
+async (e) => {
 
     e.preventDefault();
 
-    try {
+    try{
 
-        const plantName = document.getElementById("plantName").value;
-        const height = document.getElementById("height").value;
-        const fertilizer = document.getElementById("fertilizer").value;
-        const notes = document.getElementById("notes").value;
+        const plantName =
+        document.getElementById(
+            "plantName"
+        ).value;
 
-        const imageFile = document.getElementById("imageInput").files[0];
+        const height =
+        document.getElementById(
+            "height"
+        ).value;
 
-        let imageUrl = "";
+        const fertilizer =
+        document.getElementById(
+            "fertilizer"
+        ).value;
 
-        // SUBIR IMAGEN
+        const notes =
+        document.getElementById(
+            "notes"
+        ).value;
 
-        if (imageFile) {
+        const imageFile =
+        imageInput.files[0];
 
-            const imageRef = ref(
-                storage,
-                `plantas/${Date.now()}_${imageFile.name}`
-            );
+        if(!imageFile){
 
-            await uploadBytes(imageRef, imageFile);
+            alert("Debes subir una imagen");
 
-            imageUrl = await getDownloadURL(imageRef);
+            return;
 
         }
 
-        // GUARDAR EN FIRESTORE
+        // SUBIR IMAGEN
 
-        await addDoc(collection(db, "bitacora"), {
+        const imageRef = ref(
 
-            userId: auth.currentUser.uid,
-            plantName,
-            height,
-            fertilizer,
-            notes,
-            imageUrl,
-            createdAt: new Date()
+            storage,
 
-        });
+            `plantas/${
+                Date.now()
+            }_${imageFile.name}`
 
-        alert("Registro guardado");
+        );
+
+        await uploadBytes(
+            imageRef,
+            imageFile
+        );
+
+        const imageUrl =
+        await getDownloadURL(imageRef);
+
+        // GUARDAR FIRESTORE
+
+        await addDoc(
+
+            collection(db, "bitacora"),
+
+            {
+
+                userId:
+                auth.currentUser.uid,
+
+                plantName:
+                plantName,
+
+                height:
+                height,
+
+                fertilizer:
+                fertilizer,
+
+                notes:
+                notes,
+
+                imageUrl:
+                imageUrl,
+
+                createdAt:
+                new Date()
+
+            }
+
+        );
+
+        alert(
+            "Registro guardado correctamente"
+        );
 
         plantForm.reset();
 
+        previewImage.style.display =
+        "none";
+
         loadHistory();
 
-    } catch (error) {
+    }
+    catch(error){
 
-        alert(error.message);
+        console.log(error);
+
+        alert(
+            "Error al guardar registro"
+        );
 
     }
 
 });
 
 
-// CARGAR HISTORIAL
+// HISTORIAL
 
-async function loadHistory(filter = "") {
+async function loadHistory(
+filter = ""
+){
 
     historyContainer.innerHTML = "";
 
     const q = query(
+
         collection(db, "bitacora"),
-        where("userId", "==", auth.currentUser.uid)
+
+        where(
+            "userId",
+            "==",
+            auth.currentUser.uid
+        )
+
     );
 
-    const querySnapshot = await getDocs(q);
+    const querySnapshot =
+    await getDocs(q);
 
     querySnapshot.forEach((doc) => {
 
         const data = doc.data();
 
-        // FILTRO
+        if(
 
-        if (
             data.plantName
             .toLowerCase()
-            .includes(filter.toLowerCase())
-        ) {
+            .includes(
+                filter.toLowerCase()
+            )
+
+        ){
 
             historyContainer.innerHTML += `
 
                 <div class="history-item">
 
-                    <img src="${data.imageUrl}" alt="Planta">
+                    <img
+                        src="${data.imageUrl}"
+                        alt="Planta"
+                    >
 
                     <div class="history-content">
 
-                        <h4>${data.plantName}</h4>
+                        <h4>
+                            ${data.plantName}
+                        </h4>
 
-                        <p><strong>Altura:</strong> ${data.height} cm</p>
+                        <p>
+                            <strong>Altura:</strong>
+                            ${data.height} cm
+                        </p>
 
-                        <p><strong>Abono:</strong> ${data.fertilizer}</p>
+                        <p>
+                            <strong>Abono:</strong>
+                            ${data.fertilizer}
+                        </p>
 
-                        <p>${data.notes}</p>
+                        <p>
+                            <strong>Notas:</strong>
+                            ${data.notes}
+                        </p>
 
                     </div>
 
                 </div>
 
             `;
+
         }
 
     });
@@ -258,9 +489,11 @@ async function loadHistory(filter = "") {
 }
 
 
-// FILTRO BUSQUEDA
+// FILTRO
 
-searchPlant.addEventListener("input", (e) => {
+searchPlant.addEventListener(
+"input",
+(e) => {
 
     loadHistory(e.target.value);
 
